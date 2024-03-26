@@ -1,0 +1,42 @@
+input AddEmployeeEventInput {
+    employeeId: ID!
+    building: String!
+    eventDateTime: String!
+}
+
+type Query {
+    getEntranceExitInfo(employeeId: String): EntranceExitInfo
+}
+
+type Mutation {
+    addEmployeeEvent(input: AddEmployeeEventInput!): EmployeeEvent!
+
+    logEvent(action: Int!, data: String!): LogEvent!
+}
+
+type Subscription {
+    employeeEvents: EmployeeEventSubscriptionPayload!
+}
+
+type EntranceExitInfo {
+    entrance: String
+    exit: String
+}
+
+type EmployeeEvent {
+    id: ID!
+    employeeId: ID!
+    building: String!
+    eventDateTime: String!
+}
+
+type LogEvent {
+    action: Int!
+    data: String!
+}
+
+type EmployeeEventSubscriptionPayload {
+    employeeId: ID!
+    building: String!
+    eventDateTime: String!
+}
