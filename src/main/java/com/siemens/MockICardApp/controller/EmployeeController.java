@@ -1,6 +1,6 @@
 package com.siemens.MockICardApp.controller;
 
-import com.siemens.MockICardApp.data.dto.EmployeeCreateDTO;
+import com.siemens.MockICardApp.data.dto.EmployeeWriteDTO;
 import com.siemens.MockICardApp.data.dto.EmployeeReadDTO;
 import com.siemens.MockICardApp.data.model.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +30,13 @@ public class EmployeeController {
     }
 
     @PostMapping("/")
-    public Employee addEmployee(@RequestBody EmployeeCreateDTO employeeCreateDTO) {
-        return employeeService.createEmployee(employeeCreateDTO);
+    public EmployeeReadDTO addEmployee(@RequestBody EmployeeWriteDTO employeeWriteDTO) {
+        return employeeService.createEmployee(employeeWriteDTO);
     }
 
-    @PostMapping("/{id}")
-    public Employee updateEmployeeById(@PathVariable String id, @RequestBody EmployeeCreateDTO employeeCreateDTO) {
-        return employeeService.updateEmployee(id, employeeCreateDTO);
+    @PutMapping("/{id}")
+    public EmployeeReadDTO updateEmployeeById(@PathVariable String id, @RequestBody EmployeeWriteDTO employeeWriteDTO) {
+        return employeeService.updateEmployee(id, employeeWriteDTO);
     }
 
     @DeleteMapping("/{id}")

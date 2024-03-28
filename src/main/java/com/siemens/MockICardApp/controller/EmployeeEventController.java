@@ -1,6 +1,6 @@
 package com.siemens.MockICardApp.controller;
 
-import com.siemens.MockICardApp.data.dto.EmployeeEventCreateDTO;
+import com.siemens.MockICardApp.data.dto.EmployeeEventWriteDTO;
 import com.siemens.MockICardApp.data.dto.EmployeeEventReadDTO;
 import com.siemens.MockICardApp.data.model.entity.EmployeeEvent;
 import com.siemens.MockICardApp.service.EmployeeEventService;
@@ -26,12 +26,12 @@ public class EmployeeEventController {
 
     @GetMapping("/{eventId}")
     public EmployeeEventReadDTO getEmployeeEventById( @PathVariable String eventId) {
-        return employeeEventService.getEmployeeEventById(eventId);
+        return employeeEventService.getEmployeeEventByEventId(eventId);
     }
 
     @PostMapping("/")
-    public EmployeeEvent addEmployeeEvent(@PathVariable String employeeId, @RequestBody EmployeeEventCreateDTO employeeEventCreateDTO) {
-        return employeeEventService.createEmployeeEvent(employeeId, employeeEventCreateDTO);
+    public EmployeeEventReadDTO addEmployeeEvent(@PathVariable String employeeId, @RequestBody EmployeeEventWriteDTO employeeEventWriteDTO) {
+        return employeeEventService.createEmployeeEvent(employeeId, employeeEventWriteDTO);
     }
 
     @DeleteMapping("/{eventId}")
