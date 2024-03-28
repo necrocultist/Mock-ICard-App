@@ -1,11 +1,13 @@
 package com.siemens.MockICardApp.graphql.resolver;
 
+import com.siemens.MockICardApp.data.dto.EmployeeEventReadDTO;
 import com.siemens.MockICardApp.graphql.inputOutput.AddEmployeeEventInput;
-import com.siemens.MockICardApp.data.dto.EmployeeEventCreateDTO;
+import com.siemens.MockICardApp.data.dto.EmployeeEventWriteDTO;
 import com.siemens.MockICardApp.graphql.inputOutput.EntranceExitInfo;
 import com.siemens.MockICardApp.data.enums.Building;
 import com.siemens.MockICardApp.data.model.entity.Employee;
 import com.siemens.MockICardApp.data.model.entity.EmployeeEvent;
+import com.siemens.MockICardApp.repository.EmployeeEventRepository;
 import com.siemens.MockICardApp.repository.EmployeeRepository;
 import com.siemens.MockICardApp.service.EmployeeEventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,29 +28,41 @@ public class EmployeeEventResolver {
     private EmployeeRepository employeeRepository;
 
     @Autowired
+    private EmployeeEventRepository employeeEventRepository;
+
+    @Autowired
     public EmployeeEventResolver(EmployeeEventService employeeEventService) {
         this.employeeEventService = employeeEventService;
     }
 
     @MutationMapping
-    public EmployeeEvent addEmployeeEvent(@Argument AddEmployeeEventInput input) {
+    public EmployeeEventReadDTO addEmployeeEvent(@Argument AddEmployeeEventInput input) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(input.getEmployeeId());
         Employee employee = optionalEmployee.orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + input.getEmployeeId()));
         Building building = Building.valueOf(input.getBuilding());
         Timestamp eventTime = Timestamp.valueOf(input.getEventTime()); // Illegal argument exception
-        EmployeeEventCreateDTO employeeEventCreateDTO = new EmployeeEventCreateDTO(building, eventTime);
-        return employeeEventService.createEmployeeEvent(employee.getId(), employeeEventCreateDTO);
+        EmployeeEventWriteDTO employeeEventWriteDTO = new EmployeeEventWriteDTO(building, eventTime);
+        return employeeEventService.createEmployeeEvent(employee.getId(), employeeEventWriteDTO);
     }
 
     @QueryMapping
     public EntranceExitInfo getEntranceExitInfo(@Argument String employeeId) {
-        List<EmployeeEvent> entranceExitInfo = employeeEventService.getEmployeeEntranceExitTimes(employeeId);
-        if (entranceExitInfo == null || entranceExitInfo.isEmpty()) {
-            return null;
-        } else if (entranceExitInfo.size() == 1) {
-            return new EntranceExitInfo(entranceExitInfo.get(0).getEventTime(), null); // Only entrance event
+        try {
+            List<EmployeeEvent> events = employeeEventRepository.findByEmployeeId(employeeId);
+
+            if (events.isEmpty()) {
+                return null;
+            }
+            if(events.size() == 1) {
+                return new EntranceExitInfo(events.get(0).getEventTime(), null);
+            }
+            else {
+                return new EntranceExitInfo(events.get(0).getEventTime(), events.get(events.size() - 1).getEventTime());
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while fetching employee entrance and exit times: " + e.getMessage());
+            throw e;
         }
-        return new EntranceExitInfo(entranceExitInfo.get(0).getEventTime(), entranceExitInfo.get(1).getEventTime());
     }
 }
 
