@@ -1,6 +1,6 @@
 package com.siemens.MockICardApp.service;
 
-import com.siemens.MockICardApp.data.dto.EmployeeCreateDTO;
+import com.siemens.MockICardApp.data.dto.EmployeeWriteDTO;
 import com.siemens.MockICardApp.data.dto.EmployeeReadDTO;
 import com.siemens.MockICardApp.data.dto.converter.DTOConverter;
 import com.siemens.MockICardApp.data.model.entity.Employee;
@@ -11,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,12 +23,12 @@ public class EmployeeService {
     @Autowired
     private LogEventProducer logEventProducer;
 
-    public Employee createEmployee(EmployeeCreateDTO employeeCreateDTO) {
+    public EmployeeReadDTO createEmployee(EmployeeWriteDTO employeeWriteDTO) {
         try {
-            Employee employee = DTOConverter.fromCreateEmployeeDTOToEmployee(employeeCreateDTO);
+            Employee employee = DTOConverter.fromCreateEmployeeDTOToEmployee(employeeWriteDTO);
             employeeRepository.save(employee);
             logEventProducer.sendMessage(new LogEvent(1, "Device event added for user " + employee.getId() + " at " + employee.getUpdatedAt()));
-            return employee;
+            return DTOConverter.fromEmployeeToReadEmployeeDTO(employee);
         } catch (Exception e) {
             System.out.println("An error occurred during employee creation: " + e.getMessage());
             throw e;
@@ -35,16 +36,18 @@ public class EmployeeService {
     }
 
 
-    public Employee updateEmployee(String id, EmployeeCreateDTO employeeCreateDTO) {
+    public EmployeeReadDTO updateEmployee(String id, EmployeeWriteDTO employeeWriteDTO) {
         try {
             if (employeeRepository.existsById(id)) {
                 Employee employee = employeeRepository.getById(id);
-                employee.setName(employeeCreateDTO.getName());
-                employee.setSurname(employeeCreateDTO.getSurname());
-                employee.setCompany(employeeCreateDTO.getCompany());
-                employee.setBuilding(employeeCreateDTO.getBuilding());
+                employee.setName(employeeWriteDTO.getName());
+                employee.setSurname(employeeWriteDTO.getSurname());
+                employee.setCompany(employeeWriteDTO.getCompany());
+                employee.setBuilding(employeeWriteDTO.getBuilding());
+                employee.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+                employeeRepository.save(employee);
                 logEventProducer.sendMessage(new LogEvent(2, "Device event added for user " + employee.getId() + " at " + employee.getUpdatedAt()));
-                return employeeRepository.save(employee);
+                return DTOConverter.fromEmployeeToReadEmployeeDTO(employee);
             } else {
                 throw new EntityNotFoundException("Employee with id " + id + " does not exist.");
             }
