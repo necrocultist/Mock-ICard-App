@@ -1,7 +1,7 @@
 package com.siemens.MockICardApp.data.dto.converter;
 
-import com.siemens.MockICardApp.data.dto.EmployeeCreateDTO;
-import com.siemens.MockICardApp.data.dto.EmployeeEventCreateDTO;
+import com.siemens.MockICardApp.data.dto.EmployeeWriteDTO;
+import com.siemens.MockICardApp.data.dto.EmployeeEventWriteDTO;
 import com.siemens.MockICardApp.data.dto.EmployeeEventReadDTO;
 import com.siemens.MockICardApp.data.dto.EmployeeReadDTO;
 import com.siemens.MockICardApp.data.model.entity.Employee;
@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 @Component
 public class DTOConverter {
     @Autowired
-    public static Employee fromCreateEmployeeDTOToEmployee(EmployeeCreateDTO employeeCreateDTO) {
+    public static Employee fromCreateEmployeeDTOToEmployee(EmployeeWriteDTO employeeWriteDTO) {
         Employee employee = new Employee();
-        employee.setName(employeeCreateDTO.getName());
-        employee.setSurname(employeeCreateDTO.getSurname());
-        employee.setCompany(employeeCreateDTO.getCompany());
-        employee.setBuilding(employeeCreateDTO.getBuilding());
+        employee.setName(employeeWriteDTO.getName());
+        employee.setSurname(employeeWriteDTO.getSurname());
+        employee.setCompany(employeeWriteDTO.getCompany());
+        employee.setBuilding(employeeWriteDTO.getBuilding());
         employee.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         employee.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         return employee;
@@ -36,18 +36,19 @@ public class DTOConverter {
         employeeReadDTO.setBuilding(employee.getBuilding());
         employeeReadDTO.setCreatedAt(employee.getCreatedAt());
         employeeReadDTO.setUpdatedAt(employee.getUpdatedAt());
-        List<EmployeeEventReadDTO> employeeEventReadDTOs = employee.getEmployeeEvents().stream()
-                .map(DTOConverter::fromEmployeeEventToEmployeeEventReadDTO)
-                .collect(Collectors.toList());
-
-        employeeReadDTO.setEmployeeEvents(employeeEventReadDTOs);
+        if (employee.getEmployeeEvents() != null) {
+            List<EmployeeEventReadDTO> employeeEventReadDTOs = employee.getEmployeeEvents().stream()
+                    .map(DTOConverter::fromEmployeeEventToEmployeeEventReadDTO)
+                    .collect(Collectors.toList());
+            employeeReadDTO.setEmployeeEvents(employeeEventReadDTOs);
+        }
         return employeeReadDTO;
     }
 
-    public static EmployeeEvent fromEmployeeEventCreateDTOToEmployeeEvent(Employee employee, EmployeeEventCreateDTO employeeEventCreateDTO) {
+    public static EmployeeEvent fromEmployeeEventCreateDTOToEmployeeEvent(Employee employee, EmployeeEventWriteDTO employeeEventWriteDTO) {
         EmployeeEvent employeeEvent = new EmployeeEvent();
-        employeeEvent.setBuilding(employeeEventCreateDTO.getBuilding());
-        employeeEvent.setEventTime(employeeEventCreateDTO.getEventTime());
+        employeeEvent.setBuilding(employeeEventWriteDTO.getBuilding());
+        employeeEvent.setEventTime(employeeEventWriteDTO.getEventTime());
         employeeEvent.setEmployee(employee);
         employee.addEvent(employeeEvent);
         return employeeEvent;

@@ -1,5 +1,5 @@
 input AddEmployeeEventInput {
-    employeeId: ID!
+    employeeId: String!
     building: String!
     eventDateTime: String!
 }
@@ -24,8 +24,8 @@ type EntranceExitInfo {
 }
 
 type EmployeeEvent {
-    id: ID!
-    employeeId: ID!
+    id: String!
+    employeeId: String!
     building: String!
     eventDateTime: String!
 }
@@ -36,7 +36,7 @@ type LogEvent {
 }
 
 type EmployeeEventSubscriptionPayload {
-    employeeId: ID!
+    employeeId: String!
     building: String!
     eventDateTime: String!
 }
