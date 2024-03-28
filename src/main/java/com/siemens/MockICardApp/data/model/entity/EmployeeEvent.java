@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
@@ -13,7 +14,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
-public class EmployeeEvent {
+public class EmployeeEvent implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false)
@@ -26,7 +27,7 @@ public class EmployeeEvent {
     @Column(name = "event_time", nullable = false)
     private Timestamp eventTime;
 
-    @JoinColumn(name = "employee")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Employee employee;
 }
