@@ -22,40 +22,20 @@ public class KafkaConsumerConfig {
     private String bootstrapAddress;
 
     @Bean
-    public Map<String, Object> consumerConfigs() {
+    public ConsumerFactory<String, DeviceEvent> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);  //
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        return props;
-    }
-
-    @Bean
-    public ConsumerFactory<String, DeviceEvent> deviceEventConsumerFactory() {
-        Map<String, Object> props = consumerConfigs();
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, DeviceEventDeserializer.class); //
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, DeviceEventDeserializer.class);
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DeviceEvent> deviceEventKafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, DeviceEvent>
+    kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, DeviceEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(deviceEventConsumerFactory());
+        factory.setConsumerFactory(consumerFactory());
         return factory;
     }
-//
-//    @Bean
-//    public ConsumerFactory<String, LogEvent> logEventConsumerFactory() {
-//        Map<String, Object> props = consumerConfigs();
-//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, LogEventDeserializer.class);
-//        return new DefaultKafkaConsumerFactory<>(props);
-//    }
-//
-//    @Bean
-//    public ConcurrentKafkaListenerContainerFactory<String, LogEvent> logEventListenerContainerFactory() {
-//        ConcurrentKafkaListenerContainerFactory<String, LogEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
-//        factory.setConsumerFactory(logEventConsumerFactory());
-//        return factory;
-//    }
 }

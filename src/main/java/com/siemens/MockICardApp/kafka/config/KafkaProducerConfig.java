@@ -41,16 +41,4 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, LogEventSerializer.class);
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
-
-    //    @Bean
-//    public ProducerFactory<String, DeviceEvent> deviceEventProducerFactory() {
-//        Map<String, Object> props = producerConfigs();
-//        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, DeviceEventSerializer.class);   //
-//        return new DefaultKafkaProducerFactory<>(producerConfigs());
-//    }
-//
-//    @Bean
-//    public KafkaTemplate<String, DeviceEvent> deviceEventKafkaTemplate() {
-//        return new KafkaTemplate<>(deviceEventProducerFactory());
-//    }
 }
