@@ -22,8 +22,8 @@ public class DTOConverter {
         employee.setSurname(employeeWriteDTO.getSurname());
         employee.setCompany(employeeWriteDTO.getCompany());
         employee.setBuilding(employeeWriteDTO.getBuilding());
-        employee.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        employee.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        employee.setCreatedAt(String.valueOf(System.currentTimeMillis()));
+        employee.setUpdatedAt(String.valueOf(System.currentTimeMillis()));
         return employee;
     }
 

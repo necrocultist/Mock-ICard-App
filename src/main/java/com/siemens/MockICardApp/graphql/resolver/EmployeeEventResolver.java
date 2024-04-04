@@ -40,7 +40,7 @@ public class EmployeeEventResolver {
         Optional<Employee> optionalEmployee = employeeRepository.findById(input.getEmployeeId());
         Employee employee = optionalEmployee.orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + input.getEmployeeId()));
         Building building = Building.valueOf(input.getBuilding());
-        Timestamp eventTime = Timestamp.valueOf(input.getEventTime()); // Illegal argument exception
+        String eventTime = input.getEventTime();
         EmployeeEventWriteDTO employeeEventWriteDTO = new EmployeeEventWriteDTO(building, eventTime);
         return employeeEventService.createEmployeeEvent(employee.getId(), employeeEventWriteDTO);
     }

@@ -9,7 +9,7 @@ public  class EntranceExitInfo {
     private final String entrance;
     private final String  exit;
 
-    public EntranceExitInfo(Timestamp entrance, Timestamp exit) {
+    public EntranceExitInfo(String entrance, String exit) {
         this.entrance = entrance != null ? entrance.toString() : null;
         this.exit = exit != null ? exit.toString() : null;
     }

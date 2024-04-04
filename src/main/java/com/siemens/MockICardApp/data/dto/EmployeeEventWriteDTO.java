@@ -13,5 +13,5 @@ import java.sql.Timestamp;
 @Setter @Getter
 public class EmployeeEventWriteDTO {
     private Building building;
-    private Timestamp eventTime;
+    private String eventTime;
 }

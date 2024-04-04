@@ -20,7 +20,7 @@ public class EmployeeReadDTO {
     private String surname;
     private Company company;
     private Building building;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private String createdAt;
+    private String updatedAt;
     private List<EmployeeEventReadDTO> employeeEvents;
 }

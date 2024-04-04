@@ -79,7 +79,7 @@ public class EmployeeEventService {
 
     public void processEmployeeEvent(DeviceEvent deviceEvent) {
         try {
-            EmployeeEventWriteDTO employeeEventWriteDTO = new EmployeeEventWriteDTO(Building.valueOf(deviceEvent.getBuilding()), Timestamp.valueOf(deviceEvent.getEventTime()));
+            EmployeeEventWriteDTO employeeEventWriteDTO = new EmployeeEventWriteDTO(Building.valueOf(deviceEvent.getBuilding()), deviceEvent.getEventTime());
             createEmployeeEvent(deviceEvent.getEmployeeId(), employeeEventWriteDTO);
         } catch (Exception e) {
             System.out.println("An error occurred while processing employee event: " + e.getMessage());

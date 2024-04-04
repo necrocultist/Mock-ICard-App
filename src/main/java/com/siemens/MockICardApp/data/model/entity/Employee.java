@@ -39,10 +39,10 @@ public class Employee implements Serializable {
     private Building building;
 
     @Column(name = "createdAt", updatable = false, nullable = false)
-    private Timestamp createdAt;
+    private String createdAt;
 
     @Column(name = "updatedAt", nullable = false)
-    private Timestamp updatedAt;
+    private String updatedAt;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<EmployeeEvent> employeeEvents;

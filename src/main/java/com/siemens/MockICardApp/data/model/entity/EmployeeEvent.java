@@ -25,7 +25,7 @@ public class EmployeeEvent implements Serializable {
     private Building building;
 
     @Column(name = "event_time", nullable = false)
-    private Timestamp eventTime;
+    private String eventTime;
 
     @JoinColumn(name = "employee_id")
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

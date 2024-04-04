@@ -44,7 +44,7 @@ public class EmployeeService {
                 employee.setSurname(employeeWriteDTO.getSurname());
                 employee.setCompany(employeeWriteDTO.getCompany());
                 employee.setBuilding(employeeWriteDTO.getBuilding());
-                employee.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+                employee.setUpdatedAt(String.valueOf(System.currentTimeMillis()));
                 employeeRepository.save(employee);
                 logEventProducer.sendMessage(new LogEvent(2, "Device event added for user " + employee.getId() + " at " + employee.getUpdatedAt()));
                 return DTOConverter.fromEmployeeToReadEmployeeDTO(employee);
