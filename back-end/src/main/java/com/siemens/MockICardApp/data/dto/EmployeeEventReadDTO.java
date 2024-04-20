@@ -15,5 +15,4 @@ public class EmployeeEventReadDTO {
     private String id;
     private Building building;
     private String eventTime;
-
 }

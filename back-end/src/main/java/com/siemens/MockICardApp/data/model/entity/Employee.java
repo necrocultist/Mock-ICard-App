@@ -54,4 +54,3 @@ public class Employee implements Serializable {
         employeeEvents.add(event);
     }
 }
-
