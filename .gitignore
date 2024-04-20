@@ -30,4 +30,18 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+*/.vscode/*
+
+# Miscellaneous
+front-end/.angular/cache
+front-end/.sass-cache/
+front-end/connect.lock
+front-end/coverage
+front-end/libpeerconnection.log
+front-endtestem.log
+front-end/typings
+
+# Node
+front-end/node_modules
+front-end/npm-debug.log
+front-end/yarn-error.log
