@@ -9,12 +9,12 @@ import {environment} from "../environments/environment";
 })
 export class EmployeeService {
 
-  private baseUrl = environment.apiBaseUrl + '/employee/';
+  private baseUrl = environment.apiBaseUrl + '/employee';
 
   constructor(private http: HttpClient) { }
 
   getAllEmployees(): Observable<Employee[]> {
-    return this.http.get<Employee[]>(`${this.baseUrl}`);
+    return this.http.get<Employee[]>(`${this.baseUrl}/`);
   }
 
   getEmployeeById(id: string): Observable<Employee> {
@@ -22,7 +22,7 @@ export class EmployeeService {
   }
 
   createEmployee(employee: Employee): Observable<Employee> {
-    return this.http.post<Employee>(`${this.baseUrl}`, employee);
+    return this.http.post<Employee>(`${this.baseUrl}/`, employee);
   }
 
   updateEmployee(id: string, employee: Employee): Observable<Employee> {
