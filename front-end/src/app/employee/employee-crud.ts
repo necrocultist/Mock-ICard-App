@@ -8,7 +8,7 @@ import { EmployeeService } from "../../services/employee.service";
   providedIn: 'root'
 })
 export class EmployeeCrud {
-  @Output() employeeChanged = new EventEmitter<Employee>();
+  @Output() employeeChanged = new EventEmitter<string>();
 
   public employees: Employee[] = [];
 
@@ -18,10 +18,11 @@ export class EmployeeCrud {
     this.employeeService.getAllEmployees().subscribe(
       (data: Employee[]) => {
         this.employees = data;
-        this.employeeChanged.emit(); // Emit the updated employees array
+        return this.employees;
       },
       (error: HttpErrorResponse) => {
         console.error(error.message);
+        return this.employees;
       }
     );
     return this.employees;
@@ -31,8 +32,7 @@ export class EmployeeCrud {
     document.getElementById('add-employee-form')?.click();
     this.employeeService.createEmployee(addForm.value).subscribe(
       (response: Employee) => {
-        this.employeeChanged.emit(response);
-        this.getEmployees();
+        this.employeeChanged.emit("Employee added successfully!");
         addForm.reset();
       },
       (error: HttpErrorResponse) => {
@@ -45,8 +45,7 @@ export class EmployeeCrud {
   public updateEmployee(employee: Employee): void {
     this.employeeService.updateEmployee(employee.id, employee).subscribe(
       (response: Employee) => {
-        this.employeeChanged.emit(response);
-        this.getEmployees();
+        this.employeeChanged.emit("Employee updated successfully!");
       },
       (error: HttpErrorResponse) => {
         console.error(error.message);
@@ -57,8 +56,7 @@ export class EmployeeCrud {
   public deleteEmployee(employee: Employee): void {
     this.employeeService.deleteEmployee(employee.id).subscribe(
       () => {
-        this.employeeChanged.emit();
-        this.getEmployees();
+        this.employeeChanged.emit("Employee deleted successfully!");
       },
       (error: HttpErrorResponse) => {
         console.error(error.message);
