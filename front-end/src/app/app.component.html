@@ -1,17 +1,22 @@
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin UI</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
-</head>
+<!-- Bootstrap CSS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Stylesheets -->
+<link rel="stylesheet" href="../stylesheets/general-styles.css">
+<link rel="stylesheet" href="../stylesheets/table-styles.css">
+<link rel="stylesheet" href="../stylesheets/pagination-styles.css">
+<link rel="stylesheet" href="../stylesheets/button-styles.css">
 
 <body>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" style="color:white;">Employee Manager</a>
+  <a class="navbar-brand" (click)="returnToOriginal()">Employee Manager</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02"
           aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -30,38 +35,55 @@
   </div>
 </nav>
 
+<!-- Main Container -->
 <div class="container" id="main-container">
-  <table class="table">
+  <table class="table table-bordered">
     <thead>
     <tr class="table-header">
-      <th (click)="onSortEmployees('name')">Name <i class="fa fa-sort"></i></th>
-      <th (click)="onSortEmployees('surname')">Surname <i class="fa fa-sort"></i></th>
-      <th (click)="onSortEmployees('company')">Company <i class="fa fa-sort"></i></th>
-      <th (click)="onSortEmployees('building')">Building <i class="fa fa-sort"></i></th>
+      <th class="th-clickable" (click)="onSortEmployees('name')">Name <i class="fa fa-sort"></i></th>
+      <th class="th-clickable" (click)="onSortEmployees('surname')">Surname <i class="fa fa-sort"></i></th>
+      <th class="th-clickable" (click)="onSortEmployees('company')">Company <i class="fa fa-sort"></i></th>
+      <th class="th-clickable" (click)="onSortEmployees('building')">Building <i class="fa fa-sort"></i></th>
       <th>Actions</th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let employee of employees">
+    <tr *ngFor="let employee of employees | paginate: { itemsPerPage: itemPerPage, currentPage: currentPage };">
       <td><i class="fa fa-user"></i> {{ employee.name }}</td>
       <td><i class="fa fa-signature"></i> {{ employee.surname }}</td>
       <td><i class="fa fa-briefcase"></i> {{ employee.company }}</td>
       <td><i class="fa fa-building"></i> {{ employee.building }}</td>
       <td>
         <div class="btn-group btn-group-sm">
-          <button (click)="onOpenModal(employee, 'edit')" class="btn btn-primary" data-toggle="modal"
+          <button (click)="onOpenModal(employee, 'edit')" class="btn btn-info" data-toggle="modal"
                   data-target="#updateEmployeeModal"><i class="fa fa-edit"></i> Edit
           </button>
-          <button (click)="onOpenModal(employee, 'delete')" class="btn btn-secondary" data-toggle="modal"
+        </div>
+        <div class="btn-group btn-group-sm">
+          <button (click)="onOpenModal(employee, 'delete')" class="btn btn-danger" data-toggle="modal"
                   data-target="#deleteEmployeeModal"><i class="fa fa-trash"></i> Delete
           </button>
         </div>
       </td>
+
     </tr>
     </tbody>
   </table>
+  <div class="col-auto ms-auto pagination-controls-container">
+    <pagination-controls class="pagination-controls" (pageChange)="currentPage = $event"></pagination-controls>
+  </div>
+  <div class="row mb-3 items-per-page-selector">
+    <div class="col-auto">
+      <label for="itemsPerPageSelect" class="form-label">Items Per Page:</label>
+      <select id="itemsPerPageSelect" class="form-select" [(ngModel)]="itemPerPage" (change)="onChangeItemsPerPage()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+      </select>
+    </div>
+  </div>
 </div>
-
+</body>
 
 <!-- Add Employee Modal -->
 <div class="modal fade" id="addEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="addEmployeeModalLabel"
@@ -101,7 +123,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" id="add-employee-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Save changes</button>
+            <button [disabled]="addForm.invalid" type="submit" class="btn btn-success">Save changes</button>
           </div>
         </form>
       </div>
@@ -115,7 +137,8 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="updateEmployeeModalLabel">Edit Employee {{ editedEmployee.name }}</h5>
+        <h5 class="modal-title" id="updateEmployeeModalLabel">Editing
+          employee: {{ editedEmployee.name }} {{ editedEmployee.surname }}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -151,7 +174,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>
-            <button (click)="onUpdateEmployee(editForm.value)" data-dismiss="modal" class="btn btn-primary">Save
+            <button (click)="onUpdateEmployee(editForm.value)" data-dismiss="modal" class="btn btn-success">Save
               changes
             </button>
           </div>
@@ -184,11 +207,8 @@
   </div>
 </div>
 
-<!-- Notification for no employees -->
-<div *ngIf="employees?.length == 0 && canNotify" class="col-lg-12 col-md-12 col-xl-12">
-  <div class="alert alert-info" role="alert">
-    <h4 class="alert-heading">NO EMPLOYEES!</h4>
-    <p>No Employees were found.</p>
-  </div>
-</div>
-</body>
+<!-- CRUD Notification -->
+<app-notification [message]="notificationMessage" [showNotification]="showNotification"></app-notification>
+
+<app-notification [message]="'NO EMPLOYEES!'"
+                  [showNotification]="employees?.length == 0 && canNotify"></app-notification>

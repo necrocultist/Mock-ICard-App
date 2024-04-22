@@ -4,8 +4,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {AppComponent} from "./app.component";
 import {AppRoutingModule} from "./app-routing.module";
 import {CommonModule} from "@angular/common";
-import {EmployeeCrud} from "./employee/employee-crud";
-
+import {NgxPaginationModule} from "ngx-pagination";
 @NgModule({
   declarations: [
   ],
@@ -14,7 +13,8 @@ import {EmployeeCrud} from "./employee/employee-crud";
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    AppComponent
+    AppComponent,
+    NgxPaginationModule,
   ],
   providers: [],
     bootstrap: []

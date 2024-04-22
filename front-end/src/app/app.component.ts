@@ -3,17 +3,19 @@ import {RouterOutlet} from '@angular/router';
 import {Employee} from '../models/employee';
 import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule, NgForm} from "@angular/forms";
-import {Company} from "../enums/company.enum";
-import {Building} from "../enums/building.enum";
+import {Company} from "../models/enums/company.enum";
+import {Building} from "../models/enums/building.enum";
 import {EmployeeCrud} from "./employee/employee-crud";
 import {EmployeeFilter} from './employee/employee-filter';
 import {EmployeeService} from "../services/employee.service";
 import {HttpErrorResponse} from "@angular/common/http";
+import {NgxPaginationModule} from "ngx-pagination";
+import {NotificationModule} from "./notification/notification.module";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgForOf, FormsModule, NgIf],
+  imports: [RouterOutlet, NgForOf, FormsModule, NgIf, NgxPaginationModule, NotificationModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -22,40 +24,44 @@ export class AppComponent implements OnInit {
 
   public employees: Employee[] = [];
   public sortedEmployees: Employee[] = [];
+  private originalEmployees: Employee[] = [];
 
-  public companies = Object.values(Company).filter(value => typeof value === 'string');
-  public buildings = Object.values(Building).filter(value => typeof value === 'string');
   public editedEmployee: Employee = {} as Employee;
   public deletedEmployee: Employee = {} as Employee;
 
-  public canNotify: boolean = true;
-  private originalEmployees: Employee[] = [];
+  public companies = Object.values(Company).filter(value => typeof value === 'string');
+  public buildings = Object.values(Building).filter(value => typeof value === 'string');
 
-  constructor( private employeeService: EmployeeService,
-    private employeeModals: EmployeeCrud,
-    private employeeFilterService: EmployeeFilter
+  protected itemPerPage: number = 10;
+  protected currentPage: number = 1;
+
+  protected notificationMessage: string = '';
+  protected showNotification: boolean = false;
+  public canNotify: boolean = true;
+
+  constructor(private employeeService: EmployeeService,
+              private employeeModals: EmployeeCrud,
+              private employeeFilterService: EmployeeFilter
   ) {
   }
+
   ngOnInit() {
     this.getEmployees();
     this.subscribeToEmployeeModalsEvents();
-    console.log(this.buildings);
   }
 
   private subscribeToEmployeeModalsEvents(): void {
     this.employeeModals.employeeChanged.subscribe(() => this.getEmployees());
+    this.employeeModals.employeeChanged.subscribe((message: string) => this.showSuccessNotification(message));
   }
 
   public getEmployees(): void {
     this.employeeService.getAllEmployees().subscribe(
       (data: Employee[]) => {
-        console.log(data);
         this.employees = data;
-        this.canNotify = false;
       },
       (error: HttpErrorResponse) => {
-        alert(error.message);
-        this.canNotify = false;
+        console.error(error.message);
       }
     );
   }
@@ -66,6 +72,7 @@ export class AppComponent implements OnInit {
 
   public onUpdateEmployee(employee: Employee): void {
     this.employeeModals.updateEmployee(employee);
+    this.showSuccessNotification('Employee updated successfully');
   }
 
   public onDeleteEmployee(employee: Employee): void {
@@ -88,6 +95,18 @@ export class AppComponent implements OnInit {
     this.employees = this.employeeFilterService.searchEmployees(this.originalEmployees, key);
 
     this.canNotify = this.employees.length === 0 && !!key.trim();
+  }
+
+  public onChangeItemsPerPage() {
+    this.currentPage = 1;
+  }
+
+  private showSuccessNotification(message: string): void {
+    this.notificationMessage = message;
+    this.showNotification = true;
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 3000);
   }
 
   public onOpenModal(employee: Employee | null, mode: string): void {
@@ -113,5 +132,12 @@ export class AppComponent implements OnInit {
 
     container?.appendChild(button);
     button.click();
+  }
+
+  public returnToOriginal(): void {
+    this.employees = [...this.originalEmployees];
+    this.originalEmployees = [];
+    this.sortedEmployees = [];
+    this.getEmployees();
   }
 }
