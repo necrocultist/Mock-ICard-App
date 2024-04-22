@@ -1,0 +1,50 @@
+.navbar {
+  background: linear-gradient(to right, #5050DCCC, #b464fb);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: "fantasy";
+}
+
+.navbar-brand {
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  text-shadow: 1px 1px 8px #000000;
+
+}
+
+.navbar-brand:hover {
+  color: #ffcc00 !important;
+  cursor: pointer;
+}
+
+body {
+  background: #f5f5f5;
+  font-family: "Yu Gothic Medium", sans-serif;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+  margin-bottom: 30px;
+}
+
+.w-60 {
+  width: 60px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 10px;
+  font-weight: 600;
+}
+
+a {
+  color: #707070;
+}
+
+.notification-container {
+  position: relative;
+  bottom: 20px;
+  left: 40%;
+}
