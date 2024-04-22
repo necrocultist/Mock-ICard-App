@@ -1,0 +1,17 @@
+.notification {
+  position: fixed;
+  top: 92px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  right: 20px; /* Adjust the distance from the right side */
+
+}
+
+.notification.show {
+  opacity: 1;
+}
