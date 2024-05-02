@@ -4,9 +4,11 @@ import com.siemens.MockICardApp.data.dto.EmployeeEventWriteDTO;
 import com.siemens.MockICardApp.data.dto.EmployeeEventReadDTO;
 import com.siemens.MockICardApp.data.model.entity.EmployeeEvent;
 import com.siemens.MockICardApp.service.EmployeeEventService;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Console;
 import java.util.List;
 
 @RestController
@@ -37,6 +39,11 @@ public class EmployeeEventController {
     @DeleteMapping("/{eventId}")
     public void deleteEmployeeEvent(@PathVariable String eventId) {
         employeeEventService.deleteEmployeeEvent(eventId);
+    }
+
+    @GetMapping("/entrance-exit/{selectedDay}")
+    public List<EmployeeEventReadDTO> getEntranceExitEvents(@PathVariable String employeeId, @PathVariable String selectedDay) {
+        return employeeEventService.getEntranceExitEvents(employeeId, selectedDay);
     }
 }
 

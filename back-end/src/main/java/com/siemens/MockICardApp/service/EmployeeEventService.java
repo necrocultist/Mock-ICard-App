@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +76,43 @@ public class EmployeeEventService {
             return DTOConverter.fromEmployeeEventToEmployeeEventReadDTO(employeeEvent);
         } catch (EntityNotFoundException e) {
             System.out.println("An error occurred during employee event retrieval: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public List<EmployeeEventReadDTO> getEntranceExitEvents(String employeeId, String selectedDay) {
+        try {
+            String formattedSelectedDay = selectedDay.substring(0, 4) + selectedDay.substring(5, 7) + selectedDay.substring(8, 10);
+
+            List<EmployeeEvent> employeeEvents = employeeEventRepository.findByEmployeeId(employeeId);
+
+            List<EmployeeEvent> filteredEvents = new ArrayList<>();
+            for (EmployeeEvent event : employeeEvents) {
+                if (event.getEventTime().substring(6, 14).equals(formattedSelectedDay)) {
+                    filteredEvents.add(event);
+                }
+            }
+
+            // Sort the events by eventTime
+            filteredEvents.sort(Comparator.comparing(EmployeeEvent::getEventTime));
+
+            if (filteredEvents.isEmpty()) {
+                return null;
+            }
+
+            if (filteredEvents.size() == 1) {
+                return Arrays.asList(
+                        DTOConverter.fromEmployeeEventToEmployeeEventReadDTO(filteredEvents.get(0)),
+                        null
+                );
+            }
+
+            return Arrays.asList(
+                    DTOConverter.fromEmployeeEventToEmployeeEventReadDTO(filteredEvents.get(0)), // First event (entrance)
+                    DTOConverter.fromEmployeeEventToEmployeeEventReadDTO(filteredEvents.get(filteredEvents.size() - 1)) // Last event (exit)
+            );
+        } catch (Exception e) {
+            System.out.println("An error occurred while fetching employee entrance and exit events: " + e.getMessage());
             throw e;
         }
     }
