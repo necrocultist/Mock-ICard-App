@@ -1,6 +1,6 @@
 export interface EmployeeEvent {
   id: string;
   building: string;
-  eventTime: Date;
+  eventTime: string;
   employeeId: string;
 }
