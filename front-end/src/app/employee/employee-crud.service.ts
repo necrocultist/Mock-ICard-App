@@ -2,12 +2,12 @@ import { EventEmitter, Injectable, Output} from '@angular/core';
 import { NgForm } from "@angular/forms";
 import { Employee } from "../../models/employee";
 import { HttpErrorResponse } from "@angular/common/http";
-import { EmployeeService } from "../../services/employee.service";
+import { EmployeeService } from "../services/employee.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class EmployeeCrud {
+export class EmployeeCrudService {
   @Output() employeeChanged = new EventEmitter<string>();
 
   public employees: Employee[] = [];
