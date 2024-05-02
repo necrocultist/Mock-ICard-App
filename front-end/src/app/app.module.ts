@@ -5,6 +5,8 @@ import {AppComponent} from "./app.component";
 import {AppRoutingModule} from "./app-routing.module";
 import {CommonModule} from "@angular/common";
 import {NgxPaginationModule} from "ngx-pagination";
+import {MatDialogModule} from '@angular/material/dialog';
+
 @NgModule({
   declarations: [
   ],
@@ -15,6 +17,7 @@ import {NgxPaginationModule} from "ngx-pagination";
     AppRoutingModule,
     AppComponent,
     NgxPaginationModule,
+    MatDialogModule
   ],
   providers: [],
     bootstrap: []
