@@ -5,12 +5,15 @@ import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule, NgForm} from "@angular/forms";
 import {Company} from "../models/enums/company.enum";
 import {Building} from "../models/enums/building.enum";
-import {EmployeeCrud} from "./employee/employee-crud";
+import {EmployeeCrudService} from "./employee/employee-crud.service";
 import {EmployeeFilter} from './employee/employee-filter';
-import {EmployeeService} from "../services/employee.service";
+import {EmployeeService} from "./services/employee.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NgxPaginationModule} from "ngx-pagination";
 import {NotificationModule} from "./notification/notification.module";
+import {EmployeeEventsCrudService} from "./employee-events/employee-events-crud.service";
+import {MatDialog} from "@angular/material/dialog";
+import {EmployeeEventsPopupComponent} from "./employee-events-popup/employee-events-popup.component";
 
 @Component({
   selector: 'app-root',
@@ -22,37 +25,41 @@ import {NotificationModule} from "./notification/notification.module";
 export class AppComponent implements OnInit {
   title = 'siemens-bootcamp-fe';
 
-  public employees: Employee[] = [];
-  public sortedEmployees: Employee[] = [];
+  protected employees: Employee[] = [];
+  protected sortedEmployees: Employee[] = [];
   private originalEmployees: Employee[] = [];
 
-  public editedEmployee: Employee = {} as Employee;
-  public deletedEmployee: Employee = {} as Employee;
+  protected editedEmployee: Employee = {} as Employee;
+  protected deletedEmployee: Employee = {} as Employee;
 
-  public companies = Object.values(Company).filter(value => typeof value === 'string');
-  public buildings = Object.values(Building).filter(value => typeof value === 'string');
+  protected companies = Object.values(Company).filter(value => typeof value === 'string');
+  protected buildings = Object.values(Building).filter(value => typeof value === 'string');
 
   protected itemPerPage: number = 10;
   protected currentPage: number = 1;
 
   protected notificationMessage: string = '';
   protected showNotification: boolean = false;
-  public canNotify: boolean = true;
+  protected canNotify: boolean = false;
 
   constructor(private employeeService: EmployeeService,
-              private employeeModals: EmployeeCrud,
-              private employeeFilterService: EmployeeFilter
+              private employeeCrudService: EmployeeCrudService,
+              private employeeFilterService: EmployeeFilter,
+              private employeeEventsCrudService: EmployeeEventsCrudService,
+              private dialog: MatDialog
   ) {
   }
 
   ngOnInit() {
     this.getEmployees();
     this.subscribeToEmployeeModalsEvents();
+    this.canNotify = true;
   }
 
   private subscribeToEmployeeModalsEvents(): void {
-    this.employeeModals.employeeChanged.subscribe(() => this.getEmployees());
-    this.employeeModals.employeeChanged.subscribe((message: string) => this.showSuccessNotification(message));
+    this.employeeCrudService.employeeChanged.subscribe(() => this.getEmployees());
+    this.employeeCrudService.employeeChanged.subscribe((message: string) => this.showSuccessNotification(message));
+    this.employeeEventsCrudService.employeeEventAdded.subscribe((message: string) => this.showSuccessNotification(message));
   }
 
   public getEmployees(): void {
@@ -67,16 +74,16 @@ export class AppComponent implements OnInit {
   }
 
   public onAddEmployee(addForm: NgForm): void {
-    this.employeeModals.addEmployee(addForm);
+    this.employeeCrudService.addEmployee(addForm);
   }
 
   public onUpdateEmployee(employee: Employee): void {
-    this.employeeModals.updateEmployee(employee);
+    this.employeeCrudService.updateEmployee(employee);
     this.showSuccessNotification('Employee updated successfully');
   }
 
   public onDeleteEmployee(employee: Employee): void {
-    this.employeeModals.deleteEmployee(employee);
+    this.employeeCrudService.deleteEmployee(employee);
     this.getEmployees();
   }
 
@@ -99,6 +106,17 @@ export class AppComponent implements OnInit {
 
   public onChangeItemsPerPage() {
     this.currentPage = 1;
+  }
+
+  public onGetEmployeeEvents(employee: Employee): void {
+    const dialogRef = this.dialog.open(EmployeeEventsPopupComponent, {
+      width: '1000px',
+      data: employee
+    });
+  }
+
+  public onAddEmployeeEvent(eventForm: NgForm): void {
+    this.employeeEventsCrudService.addEvent(this.editedEmployee, eventForm);
   }
 
   private showSuccessNotification(message: string): void {
@@ -130,14 +148,21 @@ export class AppComponent implements OnInit {
       button.setAttribute('data-target', '#deleteEmployeeModal');
     }
 
+    if (mode === 'event' && employee) {
+      this.editedEmployee = employee;
+      button.setAttribute('data-target', '#addEventModal');
+    }
+
+    if (mode === 'seeEvents' && employee) {
+      this.editedEmployee = employee;
+        button.setAttribute('data-target', '#employeeEventsPopupModal');
+    }
+
     container?.appendChild(button);
     button.click();
   }
 
   public returnToOriginal(): void {
-    this.employees = [...this.originalEmployees];
-    this.originalEmployees = [];
-    this.sortedEmployees = [];
-    this.getEmployees();
+    window.location.reload();
   }
 }

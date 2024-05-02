@@ -8,12 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
 <!-- Stylesheets -->
-<link rel="stylesheet" href="../stylesheets/general-styles.css">
-<link rel="stylesheet" href="../stylesheets/table-styles.css">
-<link rel="stylesheet" href="../stylesheets/pagination-styles.css">
-<link rel="stylesheet" href="../stylesheets/button-styles.css">
+<link rel="stylesheet" href="stylesheets/general-styles.css">
+<link rel="stylesheet" href="stylesheets/table-styles.css">
+<link rel="stylesheet" href="stylesheets/pagination-styles.css">
+<link rel="stylesheet" href="stylesheets/button-styles.css">
+<link rel="stylesheet" href="stylesheets/modal-styles.css">
 
-<body>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" (click)="returnToOriginal()">Employee Manager</a>
@@ -64,8 +64,17 @@
                   data-target="#deleteEmployeeModal"><i class="fa fa-trash"></i> Delete
           </button>
         </div>
+        <div class="btn-group btn-group-sm">
+          <button (click)="onOpenModal(employee, 'event')" class="btn btn-success" data-toggle="modal"
+                  data-target="#addEventModal"><i class="fa fa-plus"></i> Add Event
+          </button>
+        </div>
+        <div class="btn-group btn-group-sm">
+        <button (click)="onGetEmployeeEvents(employee)" class="btn btn-primary">
+          <i class="fa fa-calendar"></i> See Events
+        </button>
+        </div>
       </td>
-
     </tr>
     </tbody>
   </table>
@@ -83,7 +92,6 @@
     </div>
   </div>
 </div>
-</body>
 
 <!-- Add Employee Modal -->
 <div class="modal fade" id="addEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="addEmployeeModalLabel"
@@ -207,8 +215,60 @@
   </div>
 </div>
 
+<!-- Add Event Modal -->
+<div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addEventModalLabel">Add Event</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #eventForm="ngForm" (ngSubmit)="onAddEmployeeEvent(eventForm)">
+          <div class="form-group">
+            <label for="add_event_building">Building</label>
+            <select ngModel name="building" class="form-control" id="add_event_building" required>
+              <option value="" selected>--- Select a Building ---</option>
+              <option *ngFor="let building of buildings" [ngValue]="building">{{ building }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="add_event_date">Event Date</label>
+            <input type="datetime-local" ngModel name="eventTime" class="form-control" id="add_event_date" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="add-event-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">Save changes</button> <!-- [disabled]="addForm.invalid"  -->
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- See Events Modal -->
+<!--<div class="modal fade" id="employeeEventsPopupModal" tabindex="-1" role="dialog" aria-labelledby="employeeEventsPopupModalLabel"-->
+<!--     aria-hidden="true">-->
+<!--  <div class="modal-dialog" role="document">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <h5 class="modal-title" id="employeeEventsPopupModalLabel">Employee Events Popup</h5>-->
+<!--        <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--          <span aria-hidden="true">&times;</span>-->
+<!--        </button>-->
+<!--      </div>-->
+<!--      <div class="modal-body">-->
+<!--        <app-employee-events-popup [data]="editedEmployee"></app-employee-events-popup>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
 <!-- CRUD Notification -->
 <app-notification [message]="notificationMessage" [showNotification]="showNotification"></app-notification>
 
 <app-notification [message]="'NO EMPLOYEES!'"
-                  [showNotification]="employees?.length == 0 && canNotify"></app-notification>
+                  [showNotification]="employees.length == 0 && canNotify"></app-notification>

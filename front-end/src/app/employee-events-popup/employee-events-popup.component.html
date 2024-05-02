@@ -1,0 +1,79 @@
+<link rel="stylesheet" href="../stylesheets/general-styles.css">
+<link rel="stylesheet" href="../stylesheets/table-styles.css">
+<link rel="stylesheet" href="../stylesheets/pagination-styles.css">
+<link rel="stylesheet" href="../stylesheets/button-styles.css">
+<link rel="stylesheet" href="../stylesheets/modal-styles.css">
+
+<!-- Main Container -->
+<div class="container" id="main-container">
+  <table class="table table-bordered">
+    <thead>
+    <tr class="table-header">
+      <th class="th-clickable" (click)="onSortEvents('id')">Event Id <i class="fa fa-sort"></i></th>
+      <th class="th-clickable" (click)="onSortEvents('building')">Building <i class="fa fa-sort"></i></th>
+      <th class="th-clickable" (click)="onSortEvents('eventTime')">Date Time <i class="fa fa-sort"></i></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr
+      *ngFor="let employeeEvent of employeeEvents | paginate: { itemsPerPage: itemPerPage, currentPage: currentPage };">
+      <td><i class="fa fa-id-card"></i> {{ employeeEvent.id }}</td>
+      <td><i class="fa fa-building"></i> {{ employeeEvent.building }}</td>
+      <td><i class="fa fa-calendar-times"></i> {{ employeeEvent.eventTime }}</td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="row">
+    <div class="col-auto">
+      <input type="date" class="form-control" [(ngModel)]="selectedDay">
+    </div>
+    <div class="col-auto">
+      <button (click)="onEntranceExitInfo(selectedDay)" class="btn btn-info" data-toggle="modal"
+              data-target="#entranceExitModal" [disabled]="!selectedDay">
+        <i class="fa fa-calendar-day"></i> See Entrance Exit Info
+      </button>
+    </div>
+  </div>
+  <div class="col-auto ms-auto pagination-controls-container">
+    <pagination-controls class="pagination-controls" (pageChange)="currentPage = $event"></pagination-controls>
+  </div>
+  <div class="row mb-3 items-per-page-selector">
+    <div class="col-auto">
+      <label for="itemsPerPageSelect" class="form-label">Items Per Page:</label>
+      <select id="itemsPerPageSelect" class="form-select" [(ngModel)]="itemPerPage" (change)="onChangeItemsPerPage()">
+        <option value="3">3</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+      </select>
+    </div>
+  </div>
+  <div class="btn-group btn-group-sm">
+    <button mat-button (click)="closeDialog()" class="btn btn-danger"><i class="fa fa-times"></i> Close</button>
+  </div>
+</div>
+
+<!-- Entrance Exit Info Modal -->
+<div class="modal fade" id="entranceExitModal" tabindex="-1" role="dialog" aria-labelledby="entranceExitModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="entranceExitModalLabel">Entrance Exit Info For {{ selectedDay }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5>Entrance Event Info</h5>
+        <h6 >Building: {{ entranceEvent?.building }}</h6>
+        <h6>Time: {{ entranceEvent?.eventTime }}</h6>
+        <h5>Exit Event Info</h5>
+        <h6>Building: {{ exitEvent?.building }}</h6>
+        <h6>Time: {{ exitEvent?.eventTime }}</h6>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="resetEvents()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
