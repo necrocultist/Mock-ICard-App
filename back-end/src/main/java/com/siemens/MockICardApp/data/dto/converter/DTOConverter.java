@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +50,19 @@ public class DTOConverter {
     public static EmployeeEvent fromEmployeeEventCreateDTOToEmployeeEvent(Employee employee, EmployeeEventWriteDTO employeeEventWriteDTO) {
         EmployeeEvent employeeEvent = new EmployeeEvent();
         employeeEvent.setBuilding(employeeEventWriteDTO.getBuilding());
-        employeeEvent.setEventTime(employeeEventWriteDTO.getEventTime());
+
+        // Convert the event time format
+        String eventTime = employeeEventWriteDTO.getEventTime();
+        String formattedTime = LocalDateTime.parse(eventTime, DateTimeFormatter.ISO_DATE_TIME)
+                .format(DateTimeFormatter.ofPattern("HHmmss"));
+
+        // Get the date part and remove hyphens
+        String datePart = eventTime.substring(0, 10).replace("-", "");
+
+        // Concatenate date and formatted time
+        String convertedEventTime = formattedTime + datePart;
+        employeeEvent.setEventTime(convertedEventTime);
+
         employeeEvent.setEmployee(employee);
         employee.addEvent(employeeEvent);
         return employeeEvent;
